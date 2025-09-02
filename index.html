@@ -13,14 +13,32 @@
       height: 100vh;
       background: #1e1e1e;
       color: #fff;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.light {
+      background: #f5f5f5;
+      color: #111;
     }
 
     header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       padding: 10px 16px;
       background: #111;
       border-bottom: 1px solid #333;
+      transition: background 0.3s;
+    }
+
+    body.light header {
+      background: #e0e0e0;
+      border-bottom: 1px solid #bbb;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
     }
 
     header img {
@@ -31,6 +49,21 @@
     header h1 {
       font-size: 18px;
       margin: 0;
+    }
+
+    #theme-toggle {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #444;
+      color: #fff;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.light #theme-toggle {
+      background: #ddd;
+      color: #000;
     }
 
     #chat {
@@ -44,6 +77,12 @@
       border-top: 1px solid #333;
       padding: 10px;
       background: #111;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    body.light #input-area {
+      background: #e0e0e0;
+      border-color: #bbb;
     }
 
     #input-area input {
@@ -62,6 +101,12 @@
       background: #444;
       color: #fff;
       cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.light #input-area button {
+      background: #ddd;
+      color: #000;
     }
 
     pre {
@@ -73,9 +118,10 @@
       overflow-x: auto;
       margin: 8px 0;
       font-size: 14px;
+      transition: background 0.3s, color 0.3s;
     }
 
-    pre.light {
+    body.light pre {
       background: #f5f5f5;
       color: #222;
     }
@@ -101,9 +147,10 @@
       cursor: pointer;
       background: #444;
       color: #fff;
+      transition: background 0.3s, color 0.3s;
     }
 
-    pre.light .copy-btn {
+    body.light .copy-btn {
       background: #ddd;
       color: #000;
     }
@@ -127,8 +174,11 @@
 </head>
 <body>
   <header>
-    <img src="Lusibot.png" alt="Lusi Logo">
-    <h1>Lusi Bot</h1>
+    <div class="logo-area">
+      <img src="Lusibot.png" alt="Lusi Logo">
+      <h1>Lusi Bot</h1>
+    </div>
+    <button id="theme-toggle">🌙</button>
   </header>
 
   <div id="chat"></div>
@@ -139,6 +189,12 @@
   </div>
 
   <script>
+    const themeBtn = document.getElementById("theme-toggle");
+    themeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("light");
+      themeBtn.textContent = document.body.classList.contains("light") ? "🌞" : "🌙";
+    });
+
     function addMessage(role, content, isLoader=false){
       const chat = document.getElementById("chat");
       const div = document.createElement("div");
