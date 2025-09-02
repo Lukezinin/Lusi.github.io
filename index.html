@@ -1,265 +1,467 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lusi Bot</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background: #1e1e1e;
-      color: #fff;
-      transition: background 0.3s, color 0.3s;
-    }
+<meta charset="UTF-8">
+<title>Lusi - Chat AI</title>
+<style>
+:root {
+  --bg-dark: #0d1117;
+  --bg-dark-alt: #161b22;
+  --bg-light: #f5f5f5;
+  --bg-light-alt: #ffffff;
+  --text-dark: #fff;
+  --text-light: #000;
+  --msg-user-dark: #2563eb;
+  --msg-user-light: #2563eb;
+  --msg-lusi-dark: #2d2d2d;
+  --msg-lusi-light: #e0e0e0;
+}
 
-    body.light {
-      background: #f5f5f5;
-      color: #111;
-    }
+/* Layout básico */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s, color 0.3s;
+}
 
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 16px;
-      background: #111;
-      border-bottom: 1px solid #333;
-      transition: background 0.3s;
-    }
+header {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid #222;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  transition: background 0.3s;
+}
 
-    body.light header {
-      background: #e0e0e0;
-      border-bottom: 1px solid #bbb;
-    }
+header img {
+  width: 128px;
+  height: 128px;
+  border-radius: 16px;
+  transition: filter 0.3s;
+}
 
-    .logo-area {
-      display: flex;
-      align-items: center;
-    }
+header span {
+  font-size: 32px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
 
-    header img {
-      height: 32px;
-      margin-right: 10px;
-    }
+/* Configurações */
+#config {
+  padding: 10px 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid #222;
+  transition: background 0.3s;
+}
 
-    header h1 {
-      font-size: 18px;
-      margin: 0;
-    }
+#config input, #themeSelect {
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  transition: background 0.3s, color 0.3s;
+}
 
-    #theme-toggle {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #444;
-      color: #fff;
-      transition: background 0.3s, color 0.3s;
-    }
+/* Botão Limpar Chat */
+button.action-btn {
+  padding: 8px 16px;
+  border-radius: 25px;
+  border: none;
+  background: #dc2626;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
 
-    body.light #theme-toggle {
-      background: #ddd;
-      color: #000;
-    }
+button.action-btn:hover {
+  background: #b91c1c;
+  transform: scale(1.05);
+}
 
-    #chat {
-      flex: 1;
-      padding: 12px;
-      overflow-y: auto;
-    }
+/* Chat */
+#chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: background 0.3s;
+}
 
-    #input-area {
-      display: flex;
-      border-top: 1px solid #333;
-      padding: 10px;
-      background: #111;
-      transition: background 0.3s, border-color 0.3s;
-    }
+.msg {
+  max-width: 70%;
+  padding: 14px 20px;
+  border-radius: 20px;
+  word-wrap: break-word;
+  line-height: 1.5;
+  animation: fadeIn 0.3s ease-in-out;
+  position: relative;
+  font-size: 16px;
+  transition: background 0.3s, color 0.3s;
+}
 
-    body.light #input-area {
-      background: #e0e0e0;
-      border-color: #bbb;
-    }
+.msg.user {
+  align-self: flex-end;
+  border-bottom-right-radius: 5px;
+}
 
-    #input-area input {
-      flex: 1;
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      outline: none;
-    }
+.msg.lusi {
+  align-self: flex-start;
+  border-bottom-left-radius: 5px;
+}
 
-    #input-area button {
-      margin-left: 8px;
-      padding: 8px 14px;
-      border: none;
-      border-radius: 6px;
-      background: #444;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.3s, color 0.3s;
-    }
+pre {
+  background: #1e1e1e;
+  padding: 10px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  position: relative;
+}
 
-    body.light #input-area button {
-      background: #ddd;
-      color: #000;
-    }
+pre button.copy-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #2563eb;
+  border: none;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
 
-    pre {
-      position: relative;
-      background: #1e1e1e;
-      color: #fff;
-      padding: 12px;
-      border-radius: 8px;
-      overflow-x: auto;
-      margin: 8px 0;
-      font-size: 14px;
-      transition: background 0.3s, color 0.3s;
-    }
+#inputArea {
+  display: flex;
+  padding: 12px;
+  border-top: 1px solid #222;
+  gap: 8px;
+  transition: background 0.3s;
+}
 
-    body.light pre {
-      background: #f5f5f5;
-      color: #222;
-    }
+#messageInput {
+  flex: 1;
+  padding: 12px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  transition: background 0.3s, color 0.3s;
+}
 
-    pre .language-label {
-      position: absolute;
-      top: 6px;
-      left: 12px;
-      font-size: 12px;
-      font-weight: bold;
-      opacity: 0.6;
-      pointer-events: none;
-    }
+button.send-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s, transform 0.1s;
+}
 
-    .copy-btn {
-      position: absolute;
-      top: 6px;
-      right: 8px;
-      font-size: 12px;
-      padding: 4px 6px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      background: #444;
-      color: #fff;
-      transition: background 0.3s, color 0.3s;
-    }
+button.send-btn:hover, pre button.copy-btn:hover {
+  transform: scale(1.05);
+}
 
-    body.light .copy-btn {
-      background: #ddd;
-      color: #000;
-    }
+.loader {
+  display: inline-block;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
 
-    /* Responsivo */
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 16px;
-      }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-      #input-area input {
-        font-size: 14px;
-      }
+/* Dark Mode */
+body.dark {
+  background: var(--bg-dark);
+  color: var(--text-dark);
+}
+body.dark header { background: #0b0f14; }
+body.dark #config { background: #0b0f14; }
+body.dark #chat { background: var(--bg-dark-alt); }
+body.dark #inputArea { background: #0b0f14; }
+body.dark #config input, body.dark #messageInput, body.dark #themeSelect { background: #1f2630; color: #fff; }
+body.dark button.send-btn { background: #2563eb; color: #fff; }
+body.dark .msg.user { background: var(--msg-user-dark); color: #fff; }
+body.dark .msg.lusi { background: var(--msg-lusi-dark); color: #f0f0f0; }
 
-      #input-area button {
-        font-size: 14px;
-        padding: 6px 10px;
-      }
-    }
-  </style>
+/* Light Mode */
+body.light {
+  background: var(--bg-light);
+  color: var(--text-light);
+}
+body.light header { background: #e0e0e0; }
+body.light #config { background: #e0e0e0; }
+body.light #chat { background: var(--bg-light-alt); }
+body.light #inputArea { background: #e0e0e0; }
+body.light #config input, body.light #messageInput, body.light #themeSelect { background: #ffffff; color: #000; }
+body.light button.send-btn { background: #2563eb; color: #fff; }
+body.light .msg.user { background: var(--msg-user-light); color: #fff; }
+body.light .msg.lusi { background: var(--msg-lusi-light); color: #000; }
+
+/* Responsividade */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  header img {
+    width: 96px;
+    height: 96px;
+  }
+  
+  header span {
+    font-size: 24px;
+  }
+
+  #config {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  #config input, #themeSelect, button.action-btn {
+    width: 100%;
+  }
+
+  #inputArea {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  #messageInput, button.send-btn {
+    width: 100%;
+  }
+
+  .msg {
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  pre {
+    font-size: 13px;
+  }
+}
+</style>
 </head>
 <body>
-  <header>
-    <div class="logo-area">
-      <img src="Lusibot.png" alt="Lusi Logo">
-      <h1>Lusi Bot</h1>
-    </div>
-    <button id="theme-toggle">🌙</button>
-  </header>
+<header>
+  <img id="lusiLogo" src="LusiLogoBlack.png" alt="Lusi Logo">
+  <span>Lusi</span>
+</header>
 
-  <div id="chat"></div>
+<div id="config">
+  <input type="password" id="apiKeyInput" placeholder="API Key OpenRouter (sk-or-v1...)">
+  <button class="action-btn" id="clearChatBtn">🗑 Limpar Chat</button>
+  <select id="themeSelect">
+    <option value="system">Automático</option>
+    <option value="dark">Escuro</option>
+    <option value="light">Claro</option>
+  </select>
+</div>
 
-  <div id="input-area">
-    <input type="text" id="user-input" placeholder="Escreva aqui...">
-    <button onclick="sendMessage()">Enviar</button>
-  </div>
+<div id="chat"></div>
 
-  <script>
-    const themeBtn = document.getElementById("theme-toggle");
-    themeBtn.addEventListener("click", () => {
-      document.body.classList.toggle("light");
-      themeBtn.textContent = document.body.classList.contains("light") ? "🌞" : "🌙";
-    });
+<div id="inputArea">
+  <input id="messageInput" type="text" placeholder="Digite sua mensagem...">
+  <button class="send-btn" id="sendBtn">Enviar</button>
+</div>
 
-    function addMessage(role, content, isLoader=false){
-      const chat = document.getElementById("chat");
-      const div = document.createElement("div");
-      div.className = role;
+<script>
+const chat = document.getElementById("chat");
+const input = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const apiKeyInput = document.getElementById("apiKeyInput");
+const clearChatBtn = document.getElementById("clearChatBtn");
+const themeSelect = document.getElementById("themeSelect");
+const lusiLogo = document.getElementById("lusiLogo");
 
-      if(isLoader){
-        const span = document.createElement("span");
-        span.textContent = "...";
-        div.appendChild(span);
-      } else {
-        const codeRegex = /```(\w+)?\n([\s\S]*?)```/g;
-        let lastIndex = 0;
-        let match;
+const model = "gpt-4o-mini";
+let apiKey = localStorage.getItem("apiKey") || "";
+let conversation = JSON.parse(localStorage.getItem("conversation") || "[]");
+let theme = localStorage.getItem("theme") || "system";
 
-        while((match = codeRegex.exec(content)) !== null){
-          if(match.index > lastIndex){
-            div.appendChild(document.createTextNode(content.substring(lastIndex, match.index)));
-          }
+apiKeyInput.value = apiKey;
+themeSelect.value = theme;
 
-          const language = match[1] || "code";
-          const codeText = match[2];
+conversation.forEach(msg => addMessage(msg.role === "user" ? "user" : "lusi", msg.content));
 
-          const pre = document.createElement("pre");
-          const codeEl = document.createElement("code");
-          codeEl.textContent = codeText;
+function saveState(){
+  localStorage.setItem("apiKey", apiKey);
+  localStorage.setItem("conversation", JSON.stringify(conversation));
+  localStorage.setItem("theme", theme);
+}
 
-          const langLabel = document.createElement("div");
-          langLabel.className = "language-label";
-          langLabel.textContent = language;
+apiKeyInput.addEventListener("change", () => {
+  apiKey = apiKeyInput.value.trim();
+  saveState();
+});
 
-          const copyBtn = document.createElement("button");
-          copyBtn.textContent = "Copiar";
-          copyBtn.className = "copy-btn";
-          copyBtn.onclick = () => {
-            navigator.clipboard.writeText(codeText);
-            copyBtn.textContent = "Copiado!";
-            setTimeout(()=> copyBtn.textContent = "Copiar", 1500);
-          };
+clearChatBtn.addEventListener("click", () => {
+  if(confirm("Deseja realmente limpar o chat?")){
+    conversation = [];
+    localStorage.removeItem("conversation");
+    chat.innerHTML = "";
+  }
+});
 
-          pre.appendChild(langLabel);
-          pre.appendChild(copyBtn);
-          pre.appendChild(codeEl);
-          div.appendChild(pre);
+themeSelect.addEventListener("change", ()=> {
+  theme = themeSelect.value;
+  applyTheme();
+  saveState();
+});
 
-          lastIndex = match.index + match[0].length;
-        }
+function applyTheme(){
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if(theme==="dark") document.body.className="dark";
+  else if(theme==="light") document.body.className="light";
+  else document.body.className= prefersDark ? "dark" : "light";
+  lusiLogo.src = document.body.classList.contains("dark") ? "LusiLogoBlack.png" : "LusiLogoWhite.png";
+}
 
-        if(lastIndex < content.length){
-          div.appendChild(document.createTextNode(content.substring(lastIndex)));
-        }
-      }
+applyTheme();
 
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
-      return div;
+function addMessage(role, content, isLoader=false){
+  const div = document.createElement("div");
+  div.className = "msg " + role;
+
+  if(isLoader){
+    div.innerHTML = `<span class="loader">Lusi está digitando<span id="dots">...</span></span>`;
+    animateDots(div.querySelector("#dots"));
+  } else {
+    if(content.includes("```")){
+      const codeBlock = content
+        .split(/```/g)
+        .map((part,i)=> i%2===1 ? `<pre><code>${part}</code><button class="copy-btn">Copiar</button></pre>` : part)
+        .join("");
+      div.innerHTML = codeBlock;
+      div.querySelectorAll(".copy-btn").forEach(btn=>{
+        btn.addEventListener("click", e=>{
+          const code = e.target.previousElementSibling.textContent;
+          navigator.clipboard.writeText(code);
+          btn.textContent="Copiado!";
+          setTimeout(()=>btn.textContent="Copiar",1500);
+        });
+      });
+    } else {
+      div.textContent = content;
     }
+  }
 
-    function sendMessage(){
-      const input = document.getElementById("user-input");
-      if(!input.value.trim()) return;
-      addMessage("user", input.value);
-      input.value = "";
-      // Aqui você pode integrar com o backend da Lusi
-      setTimeout(()=> addMessage("bot", "```lua\nprint('Olá do Roblox!')\n```"), 1000);
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function animateDots(el){
+  let count = 0;
+  const interval = setInterval(()=>{
+    count = (count + 1) % 4;
+    el.textContent = '.'.repeat(count);
+  }, 500);
+  return interval;
+}
+
+async function callOpenRouter(){
+  if(!apiKey) return alert("Coloque sua API Key OpenRouter!");
+
+  const messages = [
+    { role: "system", content: "Você é Lusi, uma IA amigável, divertida e prestativa. Responde de forma leve e descontraída, usando emoji quando apropriado. Formata códigos dentro de ``` corretamente e se tiver o nome da linguagem nos ```. tire para funcionar corretamente." },
+    ...conversation.map(m => ({ role: m.role, content: m.content }))
+  ];
+
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({model, messages, stream:true})
+  });
+
+  if(!res.ok){
+    const msg = await res.text();
+    throw new Error(msg);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let fullText = "";
+
+  const loaderDiv = addMessage("lusi", "", true);
+
+  while(true){
+    const {done, value} = await reader.read();
+    if(done) break;
+    const chunk = decoder.decode(value,{stream:true});
+    const lines = chunk.split("\n").filter(l=>l.trim());
+
+    for(const line of lines){
+      if(line==="data: [DONE]") continue;
+      if(!line.startsWith("data:")) continue;
+      try{
+        const data = JSON.parse(line.substring(5));
+        const token = data.choices?.[0]?.delta?.content || "";
+        if(token){
+          fullText += token;
+
+          // Atualiza a mensagem em tempo real com formatação de código
+          const codeParts = fullText.split(/```/g);
+          loaderDiv.innerHTML = codeParts.map((part,i) => {
+            if(i%2===1){
+              return `<pre><code>${part}</code><button class="copy-btn">Copiar</button></pre>`;
+            } else return part;
+          }).join("");
+
+          loaderDiv.querySelectorAll(".copy-btn").forEach(btn=>{
+            btn.onclick = e=>{
+              navigator.clipboard.writeText(e.target.previousElementSibling.textContent);
+              btn.textContent="Copiado!";
+              setTimeout(()=>btn.textContent="Copiar",1500);
+            };
+          });
+
+          chat.scrollTop = chat.scrollHeight;
+        }
+      }catch(err){console.error("Erro no parsing:",err);}
     }
-  </script>
+  }
+
+  conversation.push({role:"assistant", content:fullText});
+  saveState();
+}
+
+sendBtn.addEventListener("click", ()=>{
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = "";
+  conversation.push({role:"user", content:text});
+  addMessage("user", text);
+  saveState();
+  callOpenRouter().catch(err=>{
+    addMessage("lusi","⚠️ Erro: "+err.message);
+  });
+});
+
+input.addEventListener("keydown",(e)=>{
+  if(e.key==="Enter") sendBtn.click();
+});
+</script>
 </body>
 </html>
