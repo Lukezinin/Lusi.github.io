@@ -14,7 +14,7 @@ e uma AI simples para usar no seu Navegador — tudo em **uma única página HTM
 
 ## Como usar
 
-1. Abra o site `Lukezinin.github.io` em qualquer navegador moderno.
+1. Abra o site `Lukezinin.github.io/Lusi` em qualquer navegador moderno.
 2. Crie Uma Conta No OpenRouter
 3. Faça Uma Api Key
 4. Bote Sua API KEY
