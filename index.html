@@ -71,7 +71,6 @@ header span {
   min-width: 120px;
 }
 
-/* Botão Limpar Chat */
 button.action-btn {
   padding: 6px 12px;
   border-radius: 25px;
@@ -88,7 +87,6 @@ button.action-btn:hover {
   transform: scale(1.05);
 }
 
-/* Chat */
 #chat {
   flex: 1;
   overflow-y: auto;
@@ -215,7 +213,7 @@ body.light button.send-btn { background: #2563eb; color: #fff; }
 body.light .msg.user { background: var(--msg-user-light); color: #fff; }
 body.light .msg.lusi { background: var(--msg-lusi-light); color: #000; }
 
-/* Responsividade */
+/* Responsividade apenas para celular */
 @media (max-width: 768px) {
   header {
     flex-direction: row;
@@ -238,6 +236,10 @@ body.light .msg.lusi { background: var(--msg-lusi-light); color: #000; }
     align-items: stretch;
     gap: 6px;
     padding: 8px;
+  }
+
+  #config input, #themeSelect, button.action-btn {
+    width: 100%;
   }
 
   #inputArea {
@@ -285,7 +287,6 @@ body.light .msg.lusi { background: var(--msg-lusi-light); color: #000; }
 </div>
 
 <script>
-// --- Código JS permanece igual, apenas ajusta logo ---
 const chat = document.getElementById("chat");
 const input = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
@@ -302,7 +303,6 @@ let theme = localStorage.getItem("theme") || "system";
 apiKeyInput.value = apiKey;
 themeSelect.value = theme;
 
-// carregar chat salvo
 conversation.forEach(msg => addMessage(msg.role === "user" ? "user" : "lusi", msg.content));
 
 function saveState(){
@@ -324,7 +324,7 @@ clearChatBtn.addEventListener("click", () => {
   }
 });
 
-themeSelect.addEventListener("change", ()=> {
+themeSelect.addEventListener("change", ()=>{
   theme = themeSelect.value;
   applyTheme();
   saveState();
@@ -335,7 +335,7 @@ function applyTheme(){
   if(theme==="dark") document.body.className="dark";
   else if(theme==="light") document.body.className="light";
   else document.body.className= prefersDark ? "dark" : "light";
-  lusiLogo.src = "Lusibot.png"; // Sempre usar Lusibot.png
+  lusiLogo.src = "Lusibot.png";
 }
 
 applyTheme();
@@ -381,7 +381,6 @@ function animateDots(el){
   return interval;
 }
 
-// --- Função que chama OpenRouter ---
 async function callOpenRouter(){
   if(!apiKey) return alert("Coloque sua API Key OpenRouter!");
 
@@ -437,7 +436,6 @@ async function callOpenRouter(){
   }
 }
 
-// --- Eventos ---
 sendBtn.addEventListener("click", ()=>{
   const text = input.value.trim();
   if(!text) return;
